@@ -19,6 +19,6 @@ resource "google_compute_instance" "logstash_host" {
       user = "root"
       private_key = "${file("~/.ssh/google_compute_engine")}"
     }
-    script = "../host-update-run-setup"
+    script = "../update-run-setup"
   }
 }
