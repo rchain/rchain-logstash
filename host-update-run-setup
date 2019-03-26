@@ -1,0 +1,57 @@
+#!/bin/bash
+set -e
+
+REMOTE_REPO=https://github.com/woky/rchain-logstash
+REPO=/opt/rchain-logstash
+ID=rchain-logstash
+
+CRON_LINK=/etc/cron.hourly/$ID-update-run-setup
+STATE_FILE=/var/cache/$ID-setup-gitrev
+
+############################################################
+
+if [[ ! -d $REPO ]]; then
+	export DEBIAN_FRONTEND=noninteractive
+	apt update
+	apt install -y gnupg2 git cron
+
+	git clone $REMOTE_REPO $REPO
+
+	if [[ -e $REPO/key.gpg.asc ]]; then
+		cat $REPO/key.gpg.asc |\
+			gpg2 --batch -d --pinentry-mode=loopback |\
+			gpg2 --batch --import
+	fi
+fi
+
+if ! git -C $REPO pull; then
+	echo "Failed to pull changes to $REPO" >&2
+	git -C $REPO status >&2
+fi
+
+if [[ -e $STATE_FILE ]]; then
+	curr_gitrev="$(git -C $REPO rev-parse --short HEAD)"
+	last_gitrev="$(cat $STATE_FILE)"
+	if [[ "$last_gitrev" == "$curr_gitrev" ]]; then
+		exit 0
+	fi
+fi
+
+if [[ -e $REPO/key.gpg.asc ]]; then
+	( umask 077 && git -C $REPO secret reveal -f )
+fi
+
+if [[ -n "$CRON_LINK" && "$(readlink $CRON_LINK)" != $REPO/host-update-run-setup ]]; then
+	ln -s $REPO/host-update-run-setup $CRON_LINK
+fi
+
+############################################################
+
+cd $REPO
+ret=0
+flock -x -n -E 77 $STATE_FILE ./host-setup || ret=$?
+case $ret in
+	0)  echo "$curr_gitrev" >$STATE_FILE ;;
+	77) echo "Another instance is running" >&2 ;;
+esac
+exit $ret
