@@ -12,4 +12,12 @@ resource "google_compute_instance" "logstash_host" {
     network = "default"
     access_config {}
   }
+  provisioner "remote-exec" {
+    connection {
+      type = "ssh"
+      user = "root"
+      private_key = "${file("~/.ssh/google_compute_engine")}"
+    }
+    script = "../host-update-run-setup"
+  }
 }
