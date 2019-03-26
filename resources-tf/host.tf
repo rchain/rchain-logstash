@@ -1,6 +1,7 @@
 resource "google_compute_instance" "logstash_host" {
   name = "logstash"
   machine_type = "n1-standard-1"
+  tags = [ "logstash-tcp-in" ]
   boot_disk {
     initialize_params {
       image = "ubuntu-os-cloud/ubuntu-minimal-1804-lts"
