@@ -1,3 +1,6 @@
+#!/bin/bash
+# Shebang is for Terraform script provisioner
+
 REPO_URL=https://github.com/rchain/rchain-logstash
 REPO_DIR=/opt/rchain-logstash
 GIT_CRYPT_KEY_FILE=/root/rchain-sre-git-crypt-key
