@@ -16,7 +16,7 @@ ret=0
 cleanup()
 {
 	rm -r "$temp_dir"
-	if [[ -n "$ssh_pid" ]] && kill -0 $ssh_pid >/dev/null; then
+	if [[ -n "$ssh_pid" ]] && kill -0 $ssh_pid 2>/dev/null; then
 		kill $ssh_pid
 	fi
 	exit $ret
