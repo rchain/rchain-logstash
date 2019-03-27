@@ -4,7 +4,7 @@ resource "google_compute_instance" "logstash_host" {
   tags = [ "logstash-tcp-in" ]
   boot_disk {
     initialize_params {
-      image = "ubuntu-os-cloud/ubuntu-minimal-1804-lts"
+      image = "ubuntu-os-cloud/ubuntu-1804-lts"
       size = 80
       type = "pd-standard"
     }
