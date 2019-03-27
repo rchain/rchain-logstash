@@ -17,7 +17,6 @@ fi
 if ! grep -q '^config.reload.interval:' /etc/logstash/logstash.yml; then
 	echo 'config.reload.interval: 5s' >>/etc/logstash/logstash.yml
 fi
-/usr/share/logstash/bin/logstash-plugin install logstash-output-nagios
 install -C -m644 rnode-pipeline.conf -t /etc/logstash/conf.d
 
 systemctl enable logstash
