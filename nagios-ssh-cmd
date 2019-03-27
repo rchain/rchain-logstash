@@ -12,13 +12,14 @@ if [[ ! -p /tmp/nagios.cmd ]]; then
 	chgrp logstash /tmp/nagios.cmd
 fi
 
+ret=0
 cleanup()
 {
 	rm -r "$temp_dir"
-	if [[ -n "$ssh_pid" ]] && kill -0 $ssh_pid; then
+	if [[ -n "$ssh_pid" ]] && kill -0 $ssh_pid >/dev/null; then
 		kill $ssh_pid
 	fi
-	exit 0
+	exit $ret
 }
 trap cleanup INT TERM
 
@@ -29,5 +30,5 @@ ssh -T -p $SSH_PORT $SSH_USER@$SSH_HOST <$temp_dir/ssh-fifo &
 ssh_pid=$!
 (while :; do cat /tmp/nagios.cmd; done) >$temp_dir/ssh-fifo &
 
-wait
+wait $ssh_pid || ret=$?
 cleanup
