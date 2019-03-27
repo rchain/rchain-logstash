@@ -1,6 +1,6 @@
 resource "google_compute_instance" "logstash_host" {
   name = "logstash"
-  machine_type = "n1-standard-1"
+  machine_type = "n1-standard-2"
   tags = [ "logstash-tcp-in" ]
   boot_disk {
     initialize_params {
