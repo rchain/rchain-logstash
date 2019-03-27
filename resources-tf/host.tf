@@ -29,6 +29,6 @@ resource "google_compute_instance" "logstash_host" {
   }
 
   provisioner "remote-exec" {
-    script = "../update-run-setup"
+    script = "../bootstrap"
   }
 }
