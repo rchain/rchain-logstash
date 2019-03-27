@@ -1,8 +1,10 @@
 #!/bin/bash -e
+cd "$(dirname $0)"
 
 export DEBIAN_FRONTEND=noninteractive
 apt update
-apt install -y wget apt-transport-https gnupg2 openjdk-8-jre-headless
+apt install -y wget apt-transport-https gnupg2 openjdk-8-jre-headless \
+	openssh-client socat
 
 wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
 echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" \
@@ -10,16 +12,24 @@ echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" \
 apt update
 apt install -y logstash
 
-if ! grep -qx 'config.reload.automatic: true' /etc/logstash/logstash.yml; then
+if ! grep -q '^config.reload.automatic:' /etc/logstash/logstash.yml; then
 	echo 'config.reload.automatic: true' >>/etc/logstash/logstash.yml
 fi
-
-if ! grep -qx 'config.reload.interval: 5s' /etc/logstash/logstash.yml; then
+if ! grep -q '^config.reload.interval:' /etc/logstash/logstash.yml; then
 	echo 'config.reload.interval: 5s' >>/etc/logstash/logstash.yml
 fi
-
 /usr/share/logstash/bin/logstash-plugin install logstash-output-nagios
-
 install -C -m644 rnode-pipeline.conf -t /etc/logstash/conf.d
-systemctl enable logstash
-systemctl restart logstash
+
+install -m700 -d /root/.ssh
+install -C -m600 secrets/id_rsa -t /root/.ssh/
+install -C -m644 secrets/id_rsa.pub -t /root/.ssh/
+install -C -m755 nagios-ssh-cmd -t /usr/local/bin/
+install -C -m644 nagios-ssh-cmd.rc -t /etc
+install -C -m644 nagios-ssh-cmd.service /etc/systemd/system
+
+systemctl enable nagios-ssh-cmd.service
+systemctl restart nagios-ssh-cmd.service
+
+systemctl enable --now logstash
+systemctl reload logstash

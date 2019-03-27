@@ -1,0 +1,9 @@
+[Unit]
+Description=Forward local Nagios command pipe to remote
+
+[Service]
+ExecStart=/usr/local/bin/nagios-ssh-cmd
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

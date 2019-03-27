@@ -1,0 +1,33 @@
+#!/bin/bash
+set -e
+
+source /etc/nagios-ssh-cmd.rc
+
+[[ -n "$SSH_HOST" ]]
+[[ -n "$SSH_PORT" ]]
+[[ -n "$SSH_USER" ]]
+
+if [[ ! -p /tmp/nagios.cmd ]]; then
+	mkfifo -m660 /tmp/nagios.cmd
+	chgrp logstash /tmp/nagios.cmd
+fi
+
+cleanup()
+{
+	rm -r "$temp_dir"
+	if [[ -n "$ssh_pid" ]] && kill -0 $ssh_pid; then
+		kill $ssh_pid
+	fi
+	exit 0
+}
+trap cleanup INT TERM
+
+temp_dir="$(mktemp -d nagios-ssh-cmd.XXXXXXXX)"
+mkfifo $temp_dir/ssh-fifo
+
+ssh -T -p $SSH_PORT $SSH_USER@$SSH_HOST <$temp_dir/ssh-fifo &
+ssh_pid=$!
+(while :; do cat /tmp/nagios.cmd; done) >$temp_dir/ssh-fifo &
+
+wait
+cleanup

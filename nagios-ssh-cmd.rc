@@ -1,0 +1,3 @@
+SSH_HOST=nagios.c.developer-222401.internal
+SSH_PORT=22
+SSH_USER=nagios-cmd-writer
