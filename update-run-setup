@@ -3,7 +3,7 @@ set -e
 
 REPO_URL=https://github.com/woky/rchain-logstash
 REPO_DIR=/opt/rchain-logstash
-#GIT_CRYPT_KEY_FILE=/root/rchain-sre-git-crypt-key
+GIT_CRYPT_KEY_FILE=/root/rchain-sre-git-crypt-key
 
 ############################################################
 
