@@ -4,7 +4,7 @@ cd "$(dirname $0)"
 export DEBIAN_FRONTEND=noninteractive
 apt update
 apt install -y wget apt-transport-https gnupg2 openjdk-8-jre-headless \
-	openssh-client socat
+	openssh-client
 
 wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
 echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" \
@@ -28,8 +28,5 @@ install -C -m755 nagios-ssh-cmd -t /usr/local/bin/
 install -C -m644 nagios-ssh-cmd.rc -t /etc
 install -C -m644 nagios-ssh-cmd.service /etc/systemd/system
 
-systemctl enable nagios-ssh-cmd.service
-systemctl restart nagios-ssh-cmd.service
-
-systemctl enable --now logstash
-systemctl reload logstash
+systemctl enable nagios-ssh-cmd.service logstash
+systemctl restart nagios-ssh-cmd.service logstash
