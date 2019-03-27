@@ -2,15 +2,15 @@
 cd "$(dirname $0)"
 
 export DEBIAN_FRONTEND=noninteractive
-apt update
-apt install -y wget apt-transport-https gnupg2 openjdk-8-jre-headless \
+apt update -q
+apt install -yq wget apt-transport-https gnupg2 openjdk-8-jre-headless \
 	openssh-client
 
 wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | apt-key add -
 echo "deb https://artifacts.elastic.co/packages/6.x/apt stable main" \
 	> /etc/apt/sources.list.d/elastic-6.x.list
-apt update
-apt install -y logstash
+apt update -q
+apt install -yq logstash
 
 if ! grep -q '^config.reload.automatic:' /etc/logstash/logstash.yml; then
 	echo 'config.reload.automatic: true' >>/etc/logstash/logstash.yml
