@@ -10,7 +10,7 @@ resource "google_compute_instance" "logstash_host" {
     }
   }
 
-  tags = [ "logstash-tcp-in" ]
+  tags = [ "logstash-tcp-in", "nagios-api-out" ]
 
   network_interface {
     network = "default"
