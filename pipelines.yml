@@ -1,0 +1,17 @@
+- pipeline.id: logs
+  config.string: |
+      input {
+          tcp {
+              port => 4560
+              codec => json_lines
+          }
+      }
+      output {
+          pipeline {
+              send_to => ["nagios", "elasticsearch"]
+          }
+      }
+- pipeline.id: nagios
+  path.config: "/etc/logstash/conf.d/rnode-pipeline.conf"
+- pipeline.id: elasticsearch
+  path.config: "/etc/logstash/conf.d/elasticsearch.conf"
