@@ -1,2 +1,3 @@
 /secrets/* filter=git-crypt diff=git-crypt
 elasticsearch.conf filter=git-crypt diff=git-crypt
+events.conf filter=git-crypt diff=git-crypt

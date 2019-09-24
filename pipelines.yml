@@ -15,3 +15,5 @@
   path.config: "/etc/logstash/conf.d/rnode-pipeline.conf"
 - pipeline.id: elasticsearch
   path.config: "/etc/logstash/conf.d/elasticsearch.conf"
+- pipeline.id: events
+  path.config: "/etc/logstash/conf.d/events.conf"
